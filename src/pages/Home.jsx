@@ -4,10 +4,11 @@ import { NavLink } from 'react-router-dom';
 
 export default function Home() {
     const [isVisible, setIsVisible] = useState(false);
-    const { scrollYProgress } = useScroll();
+    const { scrollYProgress, scrollY } = useScroll();
     const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
     const textY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
     const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+    const fadeOpacity = useTransform(scrollY, [0, 400], [1, 0]);
     const event = [
         {
             title: '無酒精飲料一杯',
@@ -93,20 +94,32 @@ export default function Home() {
                     </motion.p>
 
                     <div className="row d-flex">
-                        <div className="arrow-container col-6">
+                        <motion.div
+                            className="arrow-container col-6"
+                            style={{ opacity: fadeOpacity }} // 滾動時淡出
+                            initial={{ y: -100, opacity: 0 }} // 初始位置在上方並且不可見
+                            whileInView={{ y: 0, opacity: 1 }} // 滾動到視圖中時，移動到正常位置並顯示
+                            transition={{ duration: 0.8 }} // 動畫持續時間
+                        >
                             <NavLink
                                 to={"products"}
                                 className="arrow-btn text-shadow"
                             >
                                 開始點餐 <i className="fa fa-cutlery"></i>
                             </NavLink>
-                        </div>
+                        </motion.div>
 
-                        <div className="arrow-container col-6">
+                        <motion.div
+                            className="arrow-container col-6"
+                            style={{ opacity: fadeOpacity }} // 滾動時淡出
+                            initial={{ y: -100, opacity: 0 }} // 初始位置在上方並且不可見
+                            whileInView={{ y: 0, opacity: 1 }} // 滾動到視圖中時，移動到正常位置並顯示
+                            transition={{ duration: 0.8 }} // 動畫持續時間
+                        >
                             <button className="arrow-btn2 text-shadow" onClick={() => scrollTo("Bottom")}>
                                 神秘優惠 <i className="fa fa-cutlery"></i>
                             </button>
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
 
@@ -135,7 +148,7 @@ export default function Home() {
                             className="fs-5 text-shadow"
                             initial={{ x: 100, opacity: 0 }}
                             whileInView={{ x: 0, opacity: 1 }}
-                            transition={{ duration: 0.8 }}
+                            transition={{ duration: 0.4 }}
                         >
                             From delicious desserts to refreshing drinks, fresh salads, tasty sides, and hearty main courses, we have something for everyone!
                         </motion.p>

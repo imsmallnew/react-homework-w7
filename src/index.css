@@ -51,13 +51,13 @@ input[type="checkbox"] {
 }
 
 /* 導覽按鈕 */
-.btn-light{
+.btn-light {
   background-color: rgba(255, 255, 255, 0);
-  border:0;
+  border: 0;
 }
 
-.btn-light:hover{
-  color:rgba(220, 53, 69);
+.btn-light:hover {
+  color: rgba(220, 53, 69);
   background-color: rgba(255, 255, 255, 0);
 }
 
@@ -141,35 +141,34 @@ input[type="checkbox"] {
 
 /* 按鈕:商品列表左右按鈕 */
 .arrow-btn3 {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.1);
+  width: 60px;
+  height: 60px;
   border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(145deg, #ffd700, #ffcc00);
+  box-shadow: 3px 3px 10px rgba(255, 215, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease-in-out;
   cursor: pointer;
-  transition: background 0.3s ease-in-out;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 16px;
 }
 
 .arrow-btn3:hover {
-  background: rgba(0, 0, 0, 0.2);
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 24px;
+  transform: scale(1.1);
+  box-shadow: 0px 0px 15px rgba(255, 215, 0, 1);
+}
+
+.arrow-btn3:active {
+  transform: scale(0.9);
+  box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.8);
 }
 
 .left {
-  transform: translateY(-50%) rotate(180deg); 
+  /* transform: translateY(-50%) rotate(180deg);  */
   left: 50px;
   z-index: 1000;
 }
@@ -192,16 +191,20 @@ input[type="checkbox"] {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  opacity: 0;  /* 隱藏 */
-  pointer-events: none;  /* 禁止點擊 */
+  opacity: 0;
+  /* 隱藏 */
+  pointer-events: none;
+  /* 禁止點擊 */
   transition: opacity 0.3s, transform 0.3s;
   z-index: 1000;
   animation: bounce 1s infinite alternate;
 }
 
 .scroll-to-top.visible {
-  opacity: 1;  /* 顯示 */
-  pointer-events: auto;  /* 允許點擊 */
+  opacity: 1;
+  /* 顯示 */
+  pointer-events: auto;
+  /* 允許點擊 */
   transform: translateY(0);
 }
 
@@ -230,6 +233,39 @@ input[type="checkbox"] {
   }
 }
 
+.border-gold {
+  border: 2px solid #C9A86A;
+}
+
+.btn-gold {
+  background-color: #C9A86A;
+  color: black;
+  border: none;
+  transition: 0.3s;
+}
+
+.btn-gold:hover {
+  background-color: #B0895B;
+  color: white;
+}
+
+thead {
+  background-color: #FFD700;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.list-group-item.active {
+  font-size: large;
+}
+
+.list-group-item:not(.active):hover {
+  color: #FFD700 !important;
+  font-size: large;
+  transition: 0.1s;
+}
+
 @media screen and (max-width: 600px) {
   .modalImgWrap img {
     width: 100%;
@@ -241,10 +277,10 @@ input[type="checkbox"] {
     position: fixed;
     left: 20px;
     top: 300px;
-    transform: translateY(-50%) rotate(180deg); 
+    transform: translateY(-50%) rotate(180deg);
     z-index: 1000;
   }
-  
+
   .right {
     position: fixed;
     right: 20px;

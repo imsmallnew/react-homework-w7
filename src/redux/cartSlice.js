@@ -7,9 +7,9 @@ const AUTHOR = import.meta.env.VITE_API_PATH;
 
 export const getCartList = createAsyncThunk(
     "cart/getCartList",
-    async (_, { dispatch, rejectWithValue}) => {
+    async ( payload = true, { dispatch, rejectWithValue }) => {
         try {
-            dispatch(showLoading("讀取中..."))
+            payload && dispatch(showLoading("讀取中...")) // 商品列表加入購物車時不顯示整頁面讀取
             const res = await axios.get(`${API_URL}/v2/api/${AUTHOR}/cart`) 
             return res?.data?.data;
         } catch (error) {
@@ -51,4 +51,5 @@ const cartSlice = createSlice({
         })
     }
 });
+
 export default cartSlice.reducer;

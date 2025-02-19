@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import axios from 'axios';
 import ReactLoading from 'react-loading';
+import { motion, AnimatePresence } from "framer-motion";
 import { pushMessage } from '../redux/toastSlice';
 import { showLoading, hideLoading } from "../redux/loadingSlice";
 import { getCartList } from '../redux/cartSlice';
@@ -16,6 +17,12 @@ export default function ProductsList() {
   const [state, setState] = useState(false);
   const [clientProductList, setClientProductList] = useState(null);
   const [navigation, setNavigation] = useState("menu");
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  // 依分類篩選產品
+  const filteredProducts = selectedCategory
+    ? clientProductList?.filter(item => item.category === selectedCategory)
+    : clientProductList;
 
   // 取得客戶商品資料
   const getClientProducts = async () => {
@@ -38,6 +45,8 @@ export default function ProductsList() {
 
   // 加入購物車
   const addCartItem = async (item, qty) => {
+    setCartItem(item)
+    setState(true)
     try {
       const res = await axios.post(`${API_URL}/v2/api/${AUTHOR}/cart`, {
         data: {
@@ -45,7 +54,7 @@ export default function ProductsList() {
           qty: Number(qty)
         }
       })
-      dispatch(getCartList());
+      dispatch(getCartList(false));
       dispatch(pushMessage({
         title: "更新數量成功",
         text: `[${item.title}] 已加入購物車 ${qty} ${item.unit}`,
@@ -64,57 +73,180 @@ export default function ProductsList() {
 
   return (
     <>
-      <div className="container main">
-        <div className="mt-4">
-          <table className="table mt-3 table-hover">
-            <thead>
-              <tr className="table-success border-2 text-center">
-                <th scope="col" >圖片</th>
-                <th scope="col" >商品名稱</th>
-                <th scope="col" className="text-center">分類</th>
-                <th scope="col-2" className="text-center">售價 / 原價</th>
-                <th scope="col" className="text-center"></th>
-              </tr>
-            </thead>
-            <tbody className='align-middle'>
-              {clientProductList?.map((item) => {
-                return (
-                  <tr key={item.id} className='text-center'>
-                    <td><img src={item?.imageUrl} className="object-fit-cover p-1" alt="主圖" width='100' /></td>
-                    <td>{item.title}</td>
-                    <td><span className="badge bg-danger">{item.category}</span></td>
-                    <td>
-                      <h4 className="card-text text-primary d-inline">{item.price} 元  / </h4><h6 className="card-text text-secondary d-inline"><del>{item.origin_price} 元</del></h6>
-                    </td>
-                    <td>
-                      <div className="btn-group">
+      <div
+        className="container-fluid"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1491960693564-421771d727d6?q=80&w=2863&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          minHeight: "100vh",
+          position: "relative",
+          paddingTop: "70px",
+        }}
+      >
+        {/* 背景遮罩 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.2)", // 半透明遮罩
+            zIndex: 1,
+          }}
+        ></div>
+
+        <div className="row">
+          {/* 左側固定分類欄 */}
+
+          <div
+            className="col-2 d-none d-md-block"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              height: "100vh",
+              overflowY: "auto",
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              color: "#fff",
+              padding: "40px",
+              paddingTop: "50px",
+              zIndex: 10,
+            }}
+          >
+            <ul className="list-group list-group-flush mt-5 text-center">
+              {/* 全部商品按鈕 */}
+              <motion.li
+                className={`list-group-item ${selectedCategory === null ? "active bg-warning text-dark" : ""}`}
+                onClick={() => setSelectedCategory(null)}
+                style={{
+                  cursor: "pointer",
+                  backgroundColor: "transparent",
+                  color: "#fff",
+                  border: "none",
+                }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                全部商品
+              </motion.li>
+
+              {/* 動態分類按鈕 (逐漸顯示) */}
+              {[...new Set(clientProductList?.map((item) => item.category))].map((category, index) => (
+                <motion.li
+                  key={category}
+                  className={`list-group-item ${selectedCategory === category ? "active bg-warning text-dark" : ""}`}
+                  onClick={() => setSelectedCategory(category)}
+                  style={{
+                    cursor: "pointer",
+                    backgroundColor: "transparent",
+                    color: "#fff",
+                    border: "none",
+                  }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }} // 依序出現
+                >
+                  {category}
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+
+          {/* 右側商品列表 */}
+          <div className="col-12 col-md-10 offset-md-2 ps-4 pe-4" style={{ zIndex: 10 }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedCategory} // 每次分類變更，觸發動畫
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.5 }}
+                className="row mt-4"
+              >
+                {filteredProducts?.map((item) => (
+                  <div key={item.id} className="col-md-4 mb-4">
+                    <motion.div
+                      className="card h-100"
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      style={{
+                        background: "rgba(255, 255, 255, 0.1)", // 玻璃霧化效果
+                        backdropFilter: "blur(10px)",
+                        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+                        borderRadius: "10px",
+                        overflow: "hidden",
+                        padding: "10px",
+                        paddingBottom: "5px",
+                      }}
+                    >
+
+                      <Link to={`/products/${item.id}`}>
+                        <div className="overflow-hidden" style={{ height: "250px", borderRadius: "10px", position: "relative" }}>
+                          <motion.img
+                            src={item?.imageUrl}
+                            alt="商品圖片"
+                            className="card-img-top"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              borderRadius: "10px",
+                              position: "absolute",
+                              top: "0",
+                              left: "0",
+                              transformOrigin: "center",
+                            }}
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.3 }}
+                          />
+                        </div>
+                      </Link>
+
+                      <div className="card-body text-center text-white">
+                        <h4 className="card-title">{item.title}</h4>
+                        <span className="badge bg-danger me-1 mt-1" style={{ verticalAlign: "top" }}>
+                          {item.category}
+                        </span>
+                        <h4 className="text-warning d-inline"> {item.price} 元 </h4>
+                        <h6 className="text-light d-inline">
+                          <del>{item.origin_price} 元</del>
+                        </h6>
+                      </div>
+
+                      {/* 商品詳情 / 加到購物車 */}
+                      <div className="card-footer d-flex">
                         <Link
-                          className={`btn btn-outline-success btn-sm`}
+                          className="btn btn-outline-light w-50 d-flex justify-content-center align-items-center"
                           to={`/products/${item.id}`}
                         >
-                          商品詳情 <i className="fas fa-search"></i>
+                          <i className="fas fa-search me-2"></i> 商品詳情
                         </Link>
-                        <button type="button" className={`btn btn-outline-danger btn-sm ${cartItem && state && item.id === cartItem.id && "d-flex"}`}
+                        <button
+                          type="button"
+                          className="btn btn-outline-warning w-50 d-flex justify-content-center align-items-center ms-2"
+                          onClick={() => addCartItem(item, 1)}
                           disabled={cartItem && state && item.id === cartItem.id}
-                          onClick={() => {
-                            setCartItem(item)
-                            addCartItem(item, 1)
-                            setState(true)
-                          }}>加到購物車 {cartItem && state && item.id === cartItem.id ?
-                            <ReactLoading
-                              type={"spin"}
-                              color={"#FF0000"}
-                              height={"1rem"}
-                              width={"1rem"}
-                            /> :
-                            <i className="fa-solid fa-cart-shopping"></i>}</button>
+                        >
+
+                          <div className="d-flex align-items-center">{cartItem && state && item.id === cartItem.id ? (
+                            <ReactLoading type="spin" color="#FFD700" height="1rem" width="1rem" className="d-flex" />
+                          ) : (
+                            <i className="fa-solid fa-cart-shopping"></i>
+                          )}
+                          </div>
+                          <span className="ms-2">加入購物車</span>
+                        </button>
                       </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                    </motion.div>
+                  </div>
+                ))}
+
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </>

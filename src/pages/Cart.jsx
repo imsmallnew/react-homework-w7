@@ -13,8 +13,8 @@ export default function Cart() {
   const AUTHOR = import.meta.env.VITE_API_PATH;
 
   const dispatch = useDispatch();
-  const { cartList } = useSelector((state)=> state.cart);
-  
+  const { cartList } = useSelector((state) => state.cart);
+
   const defaultModalState = {
     title: "",
     category: "",
@@ -173,78 +173,115 @@ export default function Cart() {
 
   return (
     <>
-      <div className="container main mb-5">
-        <div className="mt-4">
-          <table className="table mt-3 table-hover">
-            <thead>
-              <tr className="table-warning border-2 text-center">
-                <th>圖片</th>
-                <th>商品名稱</th>
-                <th>分類</th>
-                <th style={{ width: '150px' }}>訂購數量</th>
-                <th>單價</th>
-                <th>小計</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {cartList?.carts?.map((cartItem, index) => (
-                <tr key={cartItem.id} className='align-middle text-center'>
+      <div
+        className="container-fluid"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1491960693564-421771d727d6?q=80&w=2863&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          minHeight: "100vh",
+          paddingTop: '60px',
+          position: "relative",
+        }}
+      >
+        {/* 背景遮罩 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.3)",
+            zIndex: 1,
+          }}
+        ></div>
 
-                  <td><img src={cartItem?.product?.imageUrl} className="object-fit-cover p-1" alt="主圖" width='100' /></td>
-                  <td>{cartItem.product.title}</td>
-                  <td><span className="badge bg-danger">{cartItem.product.category}</span></td>
-                  <td>
-                    <div className='btn-group' role='group'>
-                      <button type='button'
-                        disabled={cartItem.qty === 1 || isLoading}
-                        className='btn btn-secondary btn-sm'
-                        onClick={() => updateCartItem(cartItem, cartItem.qty - 1)}
-                      >-</button>
-                      <span className='btn border border-secondary' style={{ width: "50px", cursor: "auto" }}>
-                        {cartItem.qty}
-                      </span>
-                      <button type='button'
-                        disabled={isLoading}
-                        className='btn btn-secondary btn-sm'
-                        onClick={() => updateCartItem(cartItem, cartItem.qty + 1)}
-                      >+</button>
-                    </div>
-                  </td>
-                  <td className='text-primary'><h6>{cartItem.product.price}</h6></td>
-                  <td className='text-primary'><h6>{cartItem.total}</h6></td>
-                  <td>
-                    <button type="button" className="btn btn-outline-danger btn-sm" onClick={() => {
-                      openDeleteModal(cartItem)
-                    }}>
-                      <i className="fas fa-remove"></i>
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan="6" className="text-end">總計</td>
-                <td className="text-end"><h4>{cartList.total} 元</h4></td>
-              </tr>
-              <tr>
-                <td colSpan="6" className="text-end text-success">折扣價</td>
-                <td className="text-end text-success"><h4>{cartList.final_total} 元</h4></td>
-              </tr>
-            </tfoot>
-          </table>
-          <div className="text-end">
-            <Link className="btn btn-outline-danger me-2" type="button" to={'/products'}>繼續購物</Link>
-            {cartList?.carts?.length !== 0 && <button className="btn btn-outline-danger me-2" type="button" onClick={() => {
-              openDeleteModal({})
-            }}>清空購物車</button>}
-            <Link className="btn btn-outline-danger" type="button" to={'/form'}>結帳表單</Link>
+        <div className="container position-relative pb-5" style={{ zIndex: 2 }}>
+          <div className="mt-4">
+            <div className="table-responsive">
+              <table className="table mt-3 table-hover text-dark bg-light rounded-3 overflow-hidden shadow-sm">
+                <thead className="table-warning text-dark">
+                  <tr className="text-center">
+                    <th style={{ width: '120px' }}>圖片</th>
+                    <th>商品名稱</th>
+                    <th>分類</th>
+                    <th style={{ width: '150px' }}>訂購數量</th>
+                    <th>單價</th>
+                    <th>小計</th>
+                    <th style={{ width: '180px' }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cartList?.carts?.map((cartItem) => (
+                    <tr key={cartItem.id} className="align-middle text-center">
+                      <td className="text-start">
+                        <img
+                          src={cartItem?.product?.imageUrl}
+                          className="rounded border border-gold"
+                          alt="主圖"
+                          width="100"
+                        />
+                      </td>
+                      <td className="text-center"><h5>{cartItem.product.title}</h5></td>
+                      <td><span className="badge bg-danger">{cartItem.product.category}</span></td>
+                      <td>
+                        <div className="btn-group" role="group">
+                          <button
+                            type="button"
+                            disabled={cartItem.qty === 1 || isLoading}
+                            className="btn btn-outline-dark btn-sm"
+                            onClick={() => updateCartItem(cartItem, cartItem.qty - 1)}
+                          >-</button>
+                          <span className="btn border border-secondary bg-white text-dark" style={{ width: "50px", cursor: "auto" }}>
+                            {cartItem.qty}
+                          </span>
+                          <button
+                            type="button"
+                            disabled={isLoading}
+                            className="btn btn-outline-dark btn-sm"
+                            onClick={() => updateCartItem(cartItem, cartItem.qty + 1)}
+                          >+</button>
+                        </div>
+                      </td>
+                      <td className="text-dark fw-bold">{cartItem.product.price} 元</td>
+                      <td className="text-dark fw-bold">{cartItem.total} 元</td>
+                      <td>
+                        <button type="button" className="btn btn-danger btn-sm" onClick={() => openDeleteModal(cartItem)}>
+                          <i className="fas fa-trash-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colSpan="6" className="text-end fs-5">總計</td>
+                    <td className="text-end text-danger fs-4 fw-bold pe-5">{cartList.total} 元</td>
+                  </tr>
+                  <tr>
+                    <td colSpan="6" className="text-end fs-5">折扣價</td>
+                    <td className="text-end text-success fs-4 fw-bold pe-5">{cartList.final_total} 元</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            {/* 按鈕區塊 */}
+            <div className="text-end mt-2">
+              <Link className="btn btn-dark me-2 btn-lg px-4 py-2" to={'/products'}>繼續購物</Link>
+              {cartList?.carts?.length !== 0 && (
+                <button className="btn btn-danger me-2 btn-lg px-4 py-2" type="button" onClick={() => openDeleteModal({})}>
+                  清空購物車
+                </button>
+              )}
+              <Link className="btn btn-dark btn-lg px-4 py-2" to={'/form'}>結帳表單</Link>
+            </div>
           </div>
         </div>
       </div>
 
-      {/***  刪除Modal ***/}
+      {/*** 刪除Modal ***/}
       <DeleteModal
         deleteModalRef={deleteModalRef}
         tempProduct={tempProduct}
@@ -255,6 +292,5 @@ export default function Cart() {
         closeDeleteModal={closeDeleteModal}
       />
     </>
-
-  )
+  );
 }
