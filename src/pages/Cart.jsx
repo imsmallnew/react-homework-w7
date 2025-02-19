@@ -1,18 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from 'axios';
 import { Modal } from 'bootstrap';
 import { Link } from 'react-router-dom';
-import Loading from '../components/Loading';
 import DeleteModal from '../components/DeleteModal';
 import { pushMessage } from '../redux/toastSlice';
 import { showLoading, hideLoading } from "../redux/loadingSlice";
+import { getCartList } from '../redux/cartSlice';
 
 export default function Cart() {
   const API_URL = import.meta.env.VITE_BASE_URL;
   const AUTHOR = import.meta.env.VITE_API_PATH;
 
   const dispatch = useDispatch();
+  const { cartList } = useSelector((state)=> state.cart);
+  
   const defaultModalState = {
     title: "",
     category: "",
@@ -25,7 +27,7 @@ export default function Cart() {
     imageUrl: "",
     imagesUrl: []
   };
-  const [cartList, setCartList] = useState({});
+  // const [cartList, setCartList] = useState({});
   const [state, setState] = useState(false);
   const [tempProduct, setTempProduct] = useState(defaultModalState);
   const [cartItem, setCartItem] = useState({});
@@ -71,24 +73,24 @@ export default function Cart() {
   });
 
   // 取得購物車資料
-  const getCartList = async () => {
-    dispatch(showLoading("讀取中..."));
+  // const getCartList = async () => {
+  //   dispatch(showLoading("讀取中..."));
 
-    try {
-      const res = await axios.get(`${API_URL}/v2/api/${AUTHOR}/cart`)
-      let data = res.data?.data;
-      setCartList(data)
-    } catch (error) {
-      console.error(error)
-      dispatch(pushMessage({
-        title: "系統提示",
-        text: error?.response?.data?.message || `取得購物車清單失敗`,
-        status: "failed"
-      }))
-    } finally {
-      dispatch(hideLoading());
-    }
-  }
+  //   try {
+  //     const res = await axios.get(`${API_URL}/v2/api/${AUTHOR}/cart`)
+  //     let data = res.data?.data;
+  //     setCartList(data)
+  //   } catch (error) {
+  //     console.error(error)
+  //     dispatch(pushMessage({
+  //       title: "系統提示",
+  //       text: error?.response?.data?.message || `取得購物車清單失敗`,
+  //       status: "failed"
+  //     }))
+  //   } finally {
+  //     dispatch(hideLoading());
+  //   }
+  // }
 
   // 更新購物車
   const updateCartItem = async (cartItem, qty) => {
@@ -101,7 +103,7 @@ export default function Cart() {
           qty: Number(qty)
         }
       })
-      getCartList()
+      dispatch(getCartList())
       dispatch(pushMessage({
         title: "更新成功",
         text: `[${cartItem.product.title}] 數量已更新為 ${res.data?.data?.qty} ${cartItem.product.unit}`,
@@ -126,7 +128,7 @@ export default function Cart() {
     try {
       const res = await axios.delete(`${API_URL}/v2/api/${AUTHOR}/cart/${cartItem.id}`)
       closeDeleteModal()
-      getCartList()
+      dispatch(getCartList())
       dispatch(pushMessage({
         title: "刪除成功",
         text: `[${cartItem.product?.title}] 已從購物車移除`,
@@ -151,7 +153,7 @@ export default function Cart() {
     try {
       const res = await axios.delete(`${API_URL}/v2/api/${AUTHOR}/carts`)
       closeDeleteModal()
-      getCartList()
+      dispatch(getCartList())
       dispatch(pushMessage({
         title: "系統提示",
         text: `購物車已清空`,
@@ -169,13 +171,9 @@ export default function Cart() {
     }
   }
 
-  useEffect(() => {
-    getCartList()
-  }, [])
-
   return (
     <>
-      <div className="container main">
+      <div className="container main mb-5">
         <div className="mt-4">
           <table className="table mt-3 table-hover">
             <thead>

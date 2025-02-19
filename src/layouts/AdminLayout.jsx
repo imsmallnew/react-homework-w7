@@ -35,7 +35,7 @@ export default function AdminLayout() {
                                     key={index}
                                     to={route.path}
                                     className={() =>
-                                        `btn ${
+                                        `btn btn-sm ${
                                             (route.navName === "products" && isProductPage) ||
                                             (route.navName !== "products" && isExactMatch)
                                                 ? "btn-secondary"

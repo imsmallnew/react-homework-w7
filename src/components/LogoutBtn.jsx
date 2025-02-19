@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState} from 'react';
 import { useDispatch } from "react-redux"
 import axios from 'axios';
-import Loading from '../components/Loading';
 import { pushMessage } from '../redux/toastSlice';
 import { showLoading, hideLoading } from "../redux/loadingSlice";
 
@@ -16,8 +15,6 @@ export default function LogoutBtn() {
         username: "",
         password: ""
     });
-    const [isLoading, setIsLoading] = useState(false);
-    const [loadingText, setLoadingText] = useState(null);
 
     // 登出按鈕
     const handleLogout = async () => {
@@ -46,13 +43,8 @@ export default function LogoutBtn() {
 
     return (
         <>
-            {/* 讀取效果 */}
-            {isLoading && <Loading
-                loadingText={loadingText}
-            />}
-
             <div className="nav float-end">
-                <button className="btn btn-outline-secondary" type="button" id="logoutBtn" onClick={handleLogout}>登出後台</button>
+                <button className="btn btn-sm btn-outline-secondary" type="button" id="logoutBtn" onClick={handleLogout}>登出後台</button>
             </div>
         </>
     )

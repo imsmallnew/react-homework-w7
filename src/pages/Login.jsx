@@ -106,7 +106,7 @@ export default function Login() {
                         <NavLink
                             to={"/"}
                             className={({ isActive }) =>
-                                `btn ${isActive ? "btn-secondary" : "btn-outline-secondary"} me-2`
+                                `btn btn-sm ${isActive ? "btn-secondary" : "btn-outline-secondary"} me-2`
                             }
                         >
                             {"返回首頁"}

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form';
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import Loading from '../components/Loading';
 import { pushMessage } from '../redux/toastSlice';
 import { showLoading, hideLoading } from "../redux/loadingSlice";
+import { getCartList } from '../redux/cartSlice';
 
 export default function Form() {
   const API_URL = import.meta.env.VITE_BASE_URL;
@@ -13,7 +13,8 @@ export default function Form() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [cartList, setCartList] = useState({});
+  const { cartList } = useSelector((state)=> state.cart);
+  // const [cartList, setCartList] = useState({});
 
   const {
     register,
@@ -49,7 +50,7 @@ export default function Form() {
     try {
       const res = await axios.post(`${API_URL}/v2/api/${AUTHOR}/order`, data)
       reset()
-      getCartList()
+      dispatch(getCartList())
       dispatch(pushMessage({
         title: "系統提示",
         text: "購物表單已傳送成功, 請回商品列表繼續購物",
@@ -67,30 +68,31 @@ export default function Form() {
   }
 
   // 取得購物車資料
-  const getCartList = async () => {
-    dispatch(showLoading("讀取中..."));
+  // const getCartList = async () => {
+  //   dispatch(showLoading("讀取中..."));
 
-    try {
-      const res = await axios.get(`${API_URL}/v2/api/${AUTHOR}/cart`)
-      let data = res.data?.data;
-      setCartList(data)
-      data?.carts?.length === 0 && navToMenu() // 如果購物車為空則跳回商品頁面
-    } catch (error) {
-      console.error(error)
-      dispatch(pushMessage({
-        title: "系統提示",
-        text: error?.response?.data?.message || `取得購物車清單失敗`,
-        status: "failed"
-      }))
-    } finally {
-      dispatch(hideLoading());
-    }
-  }
+  //   try {
+  //     const res = await axios.get(`${API_URL}/v2/api/${AUTHOR}/cart`)
+  //     let data = res.data?.data;
+  //     setCartList(data)
+  //     data?.carts?.length === 0 && navToMenu() // 如果購物車為空則跳回商品頁面
+  //   } catch (error) {
+  //     console.error(error)
+  //     dispatch(pushMessage({
+  //       title: "系統提示",
+  //       text: error?.response?.data?.message || `取得購物車清單失敗`,
+  //       status: "failed"
+  //     }))
+  //   } finally {
+  //     dispatch(hideLoading());
+  //   }
+  // }
 
+  // 透過cartSlice取得購物車資料
   useEffect(() => {
-    getCartList()
-  }, [])
-
+    dispatch(getCartList());
+    cartList?.carts.length === 0 && navToMenu() // 如果購物車為空則跳回商品頁面
+  }, []);
 
   return (
     <>

@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import axios from 'axios';
 import { pushMessage } from '../redux/toastSlice';
 import { showLoading, hideLoading } from "../redux/loadingSlice";
+import { getCartList } from '../redux/cartSlice';
 
 export default function ProductDetail() {
     const API_URL = import.meta.env.VITE_BASE_URL;
@@ -84,6 +85,7 @@ export default function ProductDetail() {
                     qty: Number(qty)
                 }
             })
+            dispatch(getCartList());
             dispatch(pushMessage({
                 title: "更新數量成功",
                 text: `[${item.title}] 已加入購物車 ${qty} ${item.unit}`,

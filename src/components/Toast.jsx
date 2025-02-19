@@ -53,6 +53,7 @@ function Toast() {
                             type="button"
                             className="btn-close"
                             aria-label="Close"
+                            onClick={()=> dispatch(removeMessage(message.id))}
                         ></button>
                     </div>
                     <div className="toast-body">{message.text}</div>

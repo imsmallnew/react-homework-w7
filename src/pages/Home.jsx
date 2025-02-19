@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback} from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { NavLink } from 'react-router-dom';
 
@@ -25,7 +25,7 @@ export default function Home() {
 
     // 禁止水平滾動
     useEffect(() => {
-        document.body.style.overflowX = "hidden"; 
+        document.body.style.overflowX = "hidden";
         return () => {
             document.body.style.overflowX = "auto"; // 解除限制（避免影響其他頁面）
         };
@@ -35,7 +35,7 @@ export default function Home() {
     const toggleVisibility = useCallback(() => {
         setIsVisible(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10);
     }, []);
-    
+
     useEffect(() => {
         window.addEventListener("scroll", toggleVisibility);
         return () => window.removeEventListener("scroll", toggleVisibility);
@@ -78,7 +78,7 @@ export default function Home() {
                     <motion.h1
                         initial={{ y: -100, opacity: 0 }}
                         whileInView={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.8,  delay: 0.2}}
+                        transition={{ duration: 0.8, delay: 0.2 }}
                         className="display-3 fw-bold text-shadow"
                         style={{ opacity: textOpacity, transform: `translateY(${textY}px)` }}
                     >
@@ -103,7 +103,7 @@ export default function Home() {
                         </div>
 
                         <div className="arrow-container col-6">
-                            <button className="arrow-btn2 text-shadow" onClick={()=>scrollTo("Bottom")}>
+                            <button className="arrow-btn2 text-shadow" onClick={() => scrollTo("Bottom")}>
                                 神秘優惠 <i className="fa fa-cutlery"></i>
                             </button>
                         </div>
@@ -153,7 +153,24 @@ export default function Home() {
                                     whileInView={{ y: 0, opacity: 1 }} // 滾動到視圖時卡片顯示
                                     transition={{ duration: 0.5, delay: index * 0.2 }} // 每個卡片延遲進場
                                 >
-                                    <img src={item.imgUrl} className="card-img-top" style={{ height: '180px', objectFit: 'cover' }} alt={item.title} />
+
+                                    <motion.div
+                                        className="card-img-container"
+                                        style={{
+                                            overflow: "hidden",  // 限制圖片超出範圍
+                                            borderRadius: "5px" // 讓邊角不變形
+                                        }}
+                                    >
+                                        <motion.img
+                                            src={item.imgUrl}
+                                            className="card-img-top"
+                                            style={{ height: '180px', objectFit: 'cover', width: "100%" }}
+                                            alt={item.title}
+                                            whileHover={{ scale: 1.2 }}  // 內部放大
+                                            transition={{ duration: 0.3 }}
+                                        />
+                                    </motion.div>
+
                                     <div className="card-body">
                                         <h5 className="card-title">{item.title}</h5>
                                     </div>
